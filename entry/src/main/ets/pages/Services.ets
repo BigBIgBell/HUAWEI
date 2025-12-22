@@ -12,23 +12,34 @@ interface StudentInfo {
   email: string;
 }
 
+// 日期选择器状态
+interface DatePickerState {
+  showYearPicker: boolean;
+  showMonthPicker: boolean;
+  showDayPicker: boolean;
+  selectedYear: string;
+  selectedMonth: string;
+  selectedDay: string;
+}
+
 @Entry
 @Component
 struct Services {
   @State tab: number = 1;
-  @State studentId: string = '20230001';
+  @State studentId: string = '2224040738';
   @State searchText: string = '';
+  @State regionSearchText: string = ''; // 单独的地域搜索文本
 
   // 学生信息
   @State studentInfo: StudentInfo = {
-    name: '张三',
-    studentId: '20230001',
+    name: '谢英豪',
+    studentId: '2224040738',
     gender: '男',
-    birthDate: '2002-05-15',
+    birthDate: '2002-02-12',
     hometown: '北京市',
-    className: '计算机科学与技术1班',
-    phone: '13800138000',
-    email: 'zhangsan@school.edu'
+    className: '计算机科学与技术7班',
+    phone: '17377081423',
+    email: '1679332820@qq.com'
   };
 
   // 编辑状态
@@ -36,28 +47,78 @@ struct Services {
   @State showDatePicker: boolean = false;
   @State showRegionPicker: boolean = false;
 
+  // 日期选择器状态
+  @State datePickerState: DatePickerState = {
+    showYearPicker: true,
+    showMonthPicker: false,
+    showDayPicker: false,
+    selectedYear: '2002',
+    selectedMonth: '02',
+    selectedDay: '12'
+  };
+
+  // 生成年份列表 (1980-2024)
+  private yearOptions: string[] = [];
+  // 生成月份列表 (01-12)
+  private monthOptions: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+  // 生成日期列表 (01-31)
+  private dayOptions: string[] = [];
+
   // 性别选项
   private genderOptions: string[] = ['男', '女'];
 
   // 省份选项
-  private provinceOptions: string[] = ['北京市', '上海市', '广东省', '江苏省', '浙江省', '四川省', '湖北省', '陕西省'];
+  private provinceOptions: string[] = [
+    '北京市', '上海市', '天津市', '重庆市',
+    '河北省', '山西省', '辽宁省', '吉林省', '黑龙江省',
+    '江苏省', '浙江省', '安徽省', '福建省', '江西省', '山东省',
+    '河南省', '湖北省', '湖南省', '广东省', '海南省',
+    '四川省', '贵州省', '云南省', '陕西省', '甘肃省',
+    '青海省', '台湾省',
+    '内蒙古自治区', '广西壮族自治区', '西藏自治区',
+    '宁夏回族自治区', '新疆维吾尔自治区',
+    '香港特别行政区', '澳门特别行政区'
+  ];
 
   // 班级选项
   private classOptions: string[] = [
     '计算机科学与技术1班',
     '计算机科学与技术2班',
-    '软件工程1班',
-    '软件工程2班',
-    '人工智能1班',
-    '数据科学1班'
+    '计算机科学与技术3班',
+    '计算机科学与技术4班',
+    '计算机科学与技术5班',
+    '计算机科学与技术6班',
+    '计算机科学与技术7班',
+
   ];
+
+  // 初始化
+  aboutToAppear() {
+    // 生成年份列表 (1980-2024)
+    for (let year = 1980; year <= 2024; year++) {
+      this.yearOptions.push(year.toString());
+    }
+
+    // 生成日期列表 (01-31)
+    for (let day = 1; day <= 31; day++) {
+      this.dayOptions.push(day < 10 ? '0' + day.toString() : day.toString());
+    }
+
+    // 初始化日期选择器
+    const dateParts = this.studentInfo.birthDate.split('-');
+    if (dateParts.length >= 3) {
+      this.datePickerState.selectedYear = dateParts[0];
+      this.datePickerState.selectedMonth = dateParts[1];
+      this.datePickerState.selectedDay = dateParts[2];
+    }
+  }
 
   // 切换标签页
   private switchTab(index: number): void {
     this.tab = index;
   }
 
-  // 查询成绩
+  // 查询成绩 - 添加try-catch
   private queryScore(): void {
     try {
       promptAction.showToast({
@@ -69,7 +130,7 @@ struct Services {
     }
   }
 
-  // 搜索图书
+  // 搜索图书 - 添加try-catch
   private searchBook(): void {
     try {
       promptAction.showToast({
@@ -81,7 +142,7 @@ struct Services {
     }
   }
 
-  // 保存个人信息
+  // 保存个人信息 - 添加try-catch
   private saveProfile(): void {
     try {
       promptAction.showToast({
@@ -97,11 +158,55 @@ struct Services {
   // 显示日期选择器
   private showDatePickerDialog(): void {
     this.showDatePicker = true;
+    this.datePickerState.showYearPicker = true;
+    this.datePickerState.showMonthPicker = false;
+    this.datePickerState.showDayPicker = false;
   }
 
   // 显示地域选择器
   private showRegionPickerDialog(): void {
     this.showRegionPicker = true;
+    this.regionSearchText = ''; // 清空搜索文本
+  }
+
+  // 选择年份
+  private selectYear(year: string): void {
+    this.datePickerState.selectedYear = year;
+    this.datePickerState.showYearPicker = false;
+    this.datePickerState.showMonthPicker = true;
+  }
+
+  // 选择月份
+  private selectMonth(month: string): void {
+    this.datePickerState.selectedMonth = month;
+    this.datePickerState.showMonthPicker = false;
+    this.datePickerState.showDayPicker = true;
+  }
+
+  // 选择日期
+  private selectDay(day: string): void {
+    this.datePickerState.selectedDay = day;
+    this.studentInfo.birthDate = `${this.datePickerState.selectedYear}-${this.datePickerState.selectedMonth}-${this.datePickerState.selectedDay}`;
+    this.showDatePicker = false;
+  }
+
+  // 取消日期选择
+  private cancelDatePicker(): void {
+    this.showDatePicker = false;
+    // 恢复原始状态
+    this.datePickerState.showYearPicker = true;
+    this.datePickerState.showMonthPicker = false;
+    this.datePickerState.showDayPicker = false;
+  }
+
+  // 筛选省份的方法
+  private getFilteredProvinces(): string[] {
+    if (this.regionSearchText === '') {
+      return this.provinceOptions;
+    }
+    return this.provinceOptions.filter(province =>
+    province.includes(this.regionSearchText)
+    );
   }
 
   build() {
@@ -492,7 +597,7 @@ struct Services {
         }
       }
 
-      // 出生日期选择器 (Picker - 日期)
+      // 出生日期选择器 (Picker - 日期) - 增强版
       Column({ space: 5 }) {
         Text('出生日期')
           .fontSize(16);
@@ -518,41 +623,209 @@ struct Services {
           }
         }
 
-        // 日期选择器弹窗
+        // 增强版日期选择器弹窗
         if (this.showDatePicker) {
-          Column() {
-            Text('选择出生日期')
-              .fontSize(16)
-              .fontWeight(FontWeight.Bold)
-              .margin({ bottom: 10 });
+          Column({ space: 10 }) {
+            // 标题
+            Row() {
+              Text('选择出生日期')
+                .fontSize(16)
+                .fontWeight(FontWeight.Bold);
 
-            // 模拟日期选择 - 实际项目中使用DatePicker组件
-            Row({ space: 10 }) {
-              ForEach(['2000', '2001', '2002', '2003', '2004'], (year: string) => {
-                Text(year)
+              Text(`${this.datePickerState.selectedYear}年${this.datePickerState.selectedMonth}月${this.datePickerState.selectedDay}日`)
+                .fontSize(14)
+                .fontColor(Color.Blue)
+                .margin({ left: 10 });
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.SpaceBetween);
+
+            // 步骤指示器
+            Row({ space: 20 }) {
+              Column() {
+                Circle({ width: 30, height: 30 })
+                  .fill(this.datePickerState.showYearPicker ? Color.Blue : Color.Gray);
+                Text('1')
+                  .fontSize(12)
+                  .fontColor(Color.White);
+                Text('年份')
+                  .fontSize(10);
+              }
+
+              Column() {
+                Circle({ width: 30, height: 30 })
+                  .fill(this.datePickerState.showMonthPicker ? Color.Blue : Color.Gray);
+                Text('2')
+                  .fontSize(12)
+                  .fontColor(Color.White);
+                Text('月份')
+                  .fontSize(10);
+              }
+
+              Column() {
+                Circle({ width: 30, height: 30 })
+                  .fill(this.datePickerState.showDayPicker ? Color.Blue : Color.Gray);
+                Text('3')
+                  .fontSize(12)
+                  .fontColor(Color.White);
+                Text('日期')
+                  .fontSize(10);
+              }
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.SpaceAround)
+            .margin({ top: 10, bottom: 10 });
+
+            // 年份选择 (1980-2024)
+            if (this.datePickerState.showYearPicker) {
+              Column() {
+                Text('选择年份')
                   .fontSize(14)
-                  .padding(10)
-                  .backgroundColor(this.studentInfo.birthDate.includes(year) ? Color.Blue : 0xF5F5F5)
-                  .fontColor(this.studentInfo.birthDate.includes(year) ? Color.White : Color.Black)
-                  .borderRadius(5)
-                  .onClick(() => {
-                    this.studentInfo.birthDate = year + '-05-15';
-                    this.showDatePicker = false;
-                  });
-              }, (year: string) => year)
+                  .margin({ bottom: 10 });
+
+                Scroll() {
+                  Column() {
+                    ForEach(this.yearOptions, (year: string) => {
+                      Row() {
+                        Text(year + '年')
+                          .fontSize(14);
+
+                        if (this.datePickerState.selectedYear === year) {
+                          Text('✓')
+                            .fontSize(16)
+                            .fontColor(Color.Blue)
+                            .margin({ left: 10 });
+                        }
+                      }
+                      .width('100%')
+                      .padding(10)
+                      .backgroundColor(this.datePickerState.selectedYear === year ? 0xE6F7FF : Color.White)
+                      .onClick(() => {
+                        this.selectYear(year);
+                      });
+                    }, (year: string) => year)
+                  }
+                }
+                .height(200);
+              }
             }
 
-            Button() {
-              Text('取消')
-                .fontSize(14);
+            // 月份选择 (01-12)
+            if (this.datePickerState.showMonthPicker) {
+              Column() {
+                Text('选择月份')
+                  .fontSize(14)
+                  .margin({ bottom: 10 });
+
+                Scroll() {
+                  Column() {
+                    ForEach(this.monthOptions, (month: string) => {
+                      Row() {
+                        Text(month + '月')
+                          .fontSize(14);
+
+                        if (this.datePickerState.selectedMonth === month) {
+                          Text('✓')
+                            .fontSize(16)
+                            .fontColor(Color.Blue)
+                            .margin({ left: 10 });
+                        }
+                      }
+                      .width('100%')
+                      .padding(10)
+                      .backgroundColor(this.datePickerState.selectedMonth === month ? 0xE6F7FF : Color.White)
+                      .onClick(() => {
+                        this.selectMonth(month);
+                      });
+                    }, (month: string) => month)
+                  }
+                }
+                .height(200);
+              }
             }
-            .width(100)
-            .height(40)
-            .margin({ top: 20 })
-            .backgroundColor(Color.Gray)
-            .onClick(() => {
-              this.showDatePicker = false;
-            });
+
+            // 日期选择 (01-31)
+            if (this.datePickerState.showDayPicker) {
+              Column() {
+                Text('选择日期')
+                  .fontSize(14)
+                  .margin({ bottom: 10 });
+
+                Scroll() {
+                  Column() {
+                    ForEach(this.dayOptions, (day: string) => {
+                      Row() {
+                        Text(day + '日')
+                          .fontSize(14);
+
+                        if (this.datePickerState.selectedDay === day) {
+                          Text('✓')
+                            .fontSize(16)
+                            .fontColor(Color.Blue)
+                            .margin({ left: 10 });
+                        }
+                      }
+                      .width('100%')
+                      .padding(10)
+                      .backgroundColor(this.datePickerState.selectedDay === day ? 0xE6F7FF : Color.White)
+                      .onClick(() => {
+                        this.selectDay(day);
+                      });
+                    }, (day: string) => day)
+                  }
+                }
+                .height(200);
+              }
+            }
+
+            // 按钮区域
+            Row({ space: 20 }) {
+              if (this.datePickerState.showMonthPicker || this.datePickerState.showDayPicker) {
+                Button() {
+                  Text('上一步')
+                    .fontSize(14);
+                }
+                .width(100)
+                .height(40)
+                .backgroundColor(Color.Gray)
+                .onClick(() => {
+                  if (this.datePickerState.showDayPicker) {
+                    this.datePickerState.showDayPicker = false;
+                    this.datePickerState.showMonthPicker = true;
+                  } else if (this.datePickerState.showMonthPicker) {
+                    this.datePickerState.showMonthPicker = false;
+                    this.datePickerState.showYearPicker = true;
+                  }
+                });
+              }
+
+              Button() {
+                Text('取消')
+                  .fontSize(14);
+              }
+              .width(100)
+              .height(40)
+              .backgroundColor(Color.Gray)
+              .onClick(() => {
+                this.cancelDatePicker();
+              });
+
+              if (this.datePickerState.showDayPicker) {
+                Button() {
+                  Text('确定')
+                    .fontSize(14);
+                }
+                .width(100)
+                .height(40)
+                .backgroundColor(Color.Blue)
+                .onClick(() => {
+                  this.selectDay(this.datePickerState.selectedDay);
+                });
+              }
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+            .margin({ top: 20 });
           }
           .padding(20)
           .backgroundColor(Color.White)
@@ -562,7 +835,7 @@ struct Services {
         }
       }
 
-      // 籍贯选择器 (Picker - 地域)
+      // 籍贯选择器
       Column({ space: 5 }) {
         Text('籍贯')
           .fontSize(16);
@@ -588,49 +861,76 @@ struct Services {
           }
         }
 
-        // 地域选择器弹窗
+        // 增强版地域选择器弹窗
         if (this.showRegionPicker) {
-          Column() {
+          Column({ space: 10 }) {
             Text('选择籍贯')
               .fontSize(16)
               .fontWeight(FontWeight.Bold)
               .margin({ bottom: 10 });
 
-            // 模拟地区选择
-            Column() {
-              ForEach(this.provinceOptions, (province: string) => {
-                Row() {
-                  Text(province)
-                    .fontSize(14);
-
-                  if (this.studentInfo.hometown === province) {
-                    Text('✓')
-                      .fontSize(16)
-                      .fontColor(Color.Blue)
-                      .margin({ left: 10 });
-                  }
-                }
+            // 搜索框
+            Column({ space: 5 }) {
+              Text('搜索省份')
+                .fontSize(12)
+                .fontColor(Color.Gray);
+              TextInput({ text: this.regionSearchText })
                 .width('100%')
+                .height(40)
                 .padding(10)
-                .backgroundColor(this.studentInfo.hometown === province ? 0xE6F7FF : Color.White)
-                .onClick(() => {
-                  this.studentInfo.hometown = province;
-                  this.showRegionPicker = false;
+                .backgroundColor(0xF5F5F5)
+                .borderRadius(5)
+                .onChange((value: string) => {
+                  this.regionSearchText = value;
                 });
-              }, (province: string) => province)
             }
+            .margin({ bottom: 10 });
 
-            Button() {
-              Text('取消')
-                .fontSize(14);
+            // 地区列表 - 使用预先计算的方法
+            Scroll() {
+              Column() {
+                ForEach(this.getFilteredProvinces(), (province: string) => {
+                  Row() {
+                    Text(province)
+                      .fontSize(14);
+
+                    if (this.studentInfo.hometown === province) {
+                      Text('✓')
+                        .fontSize(16)
+                        .fontColor(Color.Blue)
+                        .margin({ left: 10 });
+                    }
+                  }
+                  .width('100%')
+                  .padding(10)
+                  .backgroundColor(this.studentInfo.hometown === province ? 0xE6F7FF : Color.White)
+                  .onClick(() => {
+                    this.studentInfo.hometown = province;
+                    this.showRegionPicker = false;
+                    this.regionSearchText = '';
+                  });
+                }, (province: string) => province)
+              }
             }
-            .width(100)
-            .height(40)
-            .margin({ top: 20 })
-            .backgroundColor(Color.Gray)
-            .onClick(() => {
-              this.showRegionPicker = false;
-            });
+            .height(300);
+
+            // 按钮
+            Row({ space: 20 }) {
+              Button() {
+                Text('取消')
+                  .fontSize(14);
+              }
+              .width(100)
+              .height(40)
+              .backgroundColor(Color.Gray)
+              .onClick(() => {
+                this.showRegionPicker = false;
+                this.regionSearchText = '';
+              });
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+            .margin({ top: 20 });
           }
           .padding(20)
           .backgroundColor(Color.White)
