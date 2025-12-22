@@ -10,35 +10,43 @@ struct Form {
   @State sliderValue: number = 5;
   @State additionalInfo: string = '';
 
-  // 提交表单
+  // 提交表单 - 添加错误处理
   private onSubmit(): void {
-    if (this.startPoint === '' || this.endPoint === '') {
-      promptAction.showDialog({
-        title: '提示',
-        message: '请填写起点和终点'
-      });
-      return;
-    }
+    try {
+      if (this.startPoint === '' || this.endPoint === '') {
+        promptAction.showDialog({
+          title: '提示',
+          message: '请填写起点和终点'
+        });
+        return;
+      }
 
-    promptAction.showToast({
-      message: '导航请求已提交',
-      duration: 2000
-    });
+      promptAction.showToast({
+        message: '导航请求已提交',
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('提交表单错误:', error);
+    }
   }
 
-  // 重置表单
+  // 重置表单 - 添加错误处理
   private onReset(): void {
-    this.startPoint = '';
-    this.endPoint = '';
-    this.transportType = 'walking';
-    this.selectedOptions = [];
-    this.sliderValue = 5;
-    this.additionalInfo = '';
+    try {
+      this.startPoint = '';
+      this.endPoint = '';
+      this.transportType = 'walking';
+      this.selectedOptions = [];
+      this.sliderValue = 5;
+      this.additionalInfo = '';
 
-    promptAction.showToast({
-      message: '表单已重置',
-      duration: 1500
-    });
+      promptAction.showToast({
+        message: '表单已重置',
+        duration: 1500
+      });
+    } catch (error) {
+      console.error('重置表单错误:', error);
+    }
   }
 
   // 切换复选框
@@ -204,7 +212,7 @@ struct Form {
             });
         }
 
-        // 按钮区域 - 使用正确的Button语法
+        // 按钮区域
         Row({ space: 20 }) {
           // 提交按钮
           Button() {
