@@ -35,8 +35,8 @@ struct Index {
   private serviceTabs: ServiceTabItem[] = [
     { name: '成绩查询', icon: '📊', tabIndex: 1 },
     { name: '图书查询', icon: '📚', tabIndex: 2 },
-    { name: '学生信息', icon: '👨‍🎓', tabIndex: 3 },
-    { name: '个人资料', icon: '📝', tabIndex: 4 }
+    { name: '选课查询', icon: '👨‍🎓', tabIndex: 3 },
+    { name: '个人信息', icon: '📝', tabIndex: 4 }
   ];
 
   private copyText: string = '校园热线：400-123-4567';
