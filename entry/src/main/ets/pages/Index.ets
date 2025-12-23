@@ -8,32 +8,46 @@ interface TabItem {
   page: string;
 }
 
+interface ServiceTabItem {
+  name: string;
+  icon: string;
+  tabIndex: number;
+}
+
 @Entry
 @Component
 struct Index {
   @State currentIndex: number = 0;
   @State showRedDot: boolean = true;
 
-  // 明确类型声明
+  // 底部导航Tabs - 将导航改为课表
   private tabs: TabItem[] = [
     { name: '首页', icon: '🏠', page: 'Index' },
-    { name: '导航', icon: '🗺️', page: 'Form' },
+    { name: '课表', icon: '📅', page: 'SchedulePage' },
     { name: '地图', icon: '📍', page: 'MapPage' },
     { name: '服务', icon: '🎓', page: 'Services' }
   ];
 
+  // 轮播图
   private banners: string[] = ['banner1', 'banner2', 'banner3'];
-  private quickActions: string[] = ['地图', '成绩', '图书', '服务'];
+
+  // 快捷功能
+  private serviceTabs: ServiceTabItem[] = [
+    { name: '成绩查询', icon: '📊', tabIndex: 1 },
+    { name: '图书查询', icon: '📚', tabIndex: 2 },
+    { name: '学生信息', icon: '👨‍🎓', tabIndex: 3 },
+    { name: '个人资料', icon: '📝', tabIndex: 4 }
+  ];
+
   private copyText: string = '校园热线：400-123-4567';
   private recommendations: string[] = ['讲座', '比赛', '招聘', '活动', '新闻'];
 
-  // 切换Tab - 添加错误处理
+  // 切换Tab
   private switchTab(index: number): void {
     try {
       this.currentIndex = index;
       const page = this.tabs[index].page;
       if (page !== 'Index') {
-        // 使用新的导航方法
         router.pushUrl({ url: `pages/${page}` });
       }
     } catch (error) {
@@ -41,21 +55,21 @@ struct Index {
     }
   }
 
-  // 点击快捷功能
-  private onQuickActionClick(index: number): void {
+  // 点击服务快捷功能
+  private onServiceTabClick(tabIndex: number): void {
     try {
+      const serviceName = this.serviceTabs[tabIndex - 1].name;
       promptAction.showToast({
-        message: '点击了：' + this.quickActions[index],
+        message: `切换到${serviceName}`,
         duration: 1500
       });
 
-      if (index === 0) {
-        router.pushUrl({ url: 'pages/MapPage' });
-      } else if (index === 1 || index === 2) {
-        router.pushUrl({ url: 'pages/Services' });
-      }
+      router.pushUrl({
+        url: 'pages/Services',
+        params: { initialTab: tabIndex }
+      });
     } catch (error) {
-      console.error('快捷功能点击错误:', error);
+      console.error('服务功能点击错误:', error);
     }
   }
 
@@ -73,160 +87,169 @@ struct Index {
 
   build() {
     Column() {
-      // 页面内容
-      Scroll() {
+      // 页面内容 - 使用Stack确保内容适应屏幕
+      Stack() {
         Column() {
           // 1. 轮播图
           Swiper() {
             ForEach(this.banners, (item: string, index: number) => {
               Column() {
                 Text(item)
-                  .fontSize(20)
+                  .fontSize(16)
                   .fontColor(Color.White);
               }
               .width('100%')
-              .height(150)
+              .height(120)
               .backgroundColor(index === 0 ? Color.Blue :
                 index === 1 ? Color.Green : Color.Red);
             }, (item: string) => item)
           }
           .width('100%')
-          .height(150)
+          .height(120)
           .indicator(true)
-          .loop(true);
+          .loop(true)
+          .margin({ top: 10 });
 
           // 2. 横向滚动区
           Column() {
             Text('热门推荐')
-              .fontSize(18)
+              .fontSize(16)
               .fontWeight(FontWeight.Bold)
-              .margin({ top: 20, bottom: 10 });
+              .margin({ top: 10, bottom: 8, left: 12 });
 
             Scroll() {
               Row() {
                 ForEach(this.recommendations, (item: string) => {
                   Column() {
                     Text(item)
-                      .fontSize(16)
+                      .fontSize(14)
                       .fontColor(Color.White);
                   }
-                  .width(120)
-                  .height(80)
+                  .width(100)
+                  .height(60)
                   .backgroundColor(Color.Blue)
-                  .borderRadius(8)
-                  .margin({ right: 10 })
+                  .borderRadius(6)
+                  .margin({ right: 8 })
                   .justifyContent(FlexAlign.Center);
                 }, (item: string) => item)
               }
-              .padding(10);
+              .padding({ left: 12, right: 12 });
             }
             .scrollable(ScrollDirection.Horizontal)
-            .height(100);
+            .height(70);
           }
 
           // 3. 快捷功能入口
           Column() {
             Text('快捷功能')
-              .fontSize(18)
+              .fontSize(16)
               .fontWeight(FontWeight.Bold)
-              .margin({ top: 20, bottom: 10 });
+              .margin({ top: 10, bottom: 8, left: 12 });
 
             Grid() {
-              ForEach(this.quickActions, (item: string, index: number) => {
+              ForEach(this.serviceTabs, (item: ServiceTabItem) => {
                 GridItem() {
                   Column() {
                     // 图标
                     Stack() {
-                      Circle({ width: 50, height: 50 })
+                      Circle({ width: 40, height: 40 })
                         .fill(Color.Blue);
-                      Text(item.charAt(0))
-                        .fontSize(20)
-                        .fontColor(Color.White);
+                      Text(item.icon)
+                        .fontSize(16);
                     }
-                    Text(item)
+                    .margin({ bottom: 4 });
+
+                    Text(item.name)
                       .fontSize(12)
-                      .margin({ top: 5 });
+                      .margin({ top: 2 });
                   }
                   .onClick(() => {
-                    this.onQuickActionClick(index);
-                  });
+                    this.onServiceTabClick(item.tabIndex);
+                  })
+                  .justifyContent(FlexAlign.Center)
+                  .alignItems(HorizontalAlign.Center)
+                  .height(90);
                 }
-              }, (item: string) => item)
+              }, (item: ServiceTabItem) => `${item.name}-${item.tabIndex}`)
             }
-            .columnsTemplate('1fr 1fr 1fr 1fr')
-            .rowsTemplate('1fr')
+            .columnsTemplate('1fr 1fr')
+            .rowsTemplate('1fr 1fr')
             .columnsGap(10)
             .rowsGap(10)
-            .height(100)
-            .margin({ bottom: 20 });
+            .height(200)
+            .margin({ bottom: 10, left: 12, right: 12 });
           }
 
           // 4. 富文本展示区
           Column() {
             Text('校园公告')
-              .fontSize(18)
+              .fontSize(16)
               .fontWeight(FontWeight.Bold)
-              .margin({ bottom: 10 });
+              .margin({ bottom: 8, left: 12 });
 
             Column() {
               Text('重要通知')
-                .fontSize(16)
+                .fontSize(14)
                 .fontColor(Color.Red)
                 .fontWeight(FontWeight.Bold);
               Text('系统维护通知')
-                .fontSize(14)
-                .margin({ top: 5 });
-              Text('时间：周末00:00-06:00')
                 .fontSize(12)
+                .margin({ top: 4 });
+              Text('时间：周末00:00-06:00')
+                .fontSize(10)
                 .fontColor(Color.Gray)
-                .margin({ top: 5 });
+                .margin({ top: 4 });
             }
-            .padding(15)
+            .padding(12)
             .backgroundColor(0xF5F5F5)
-            .borderRadius(8);
+            .borderRadius(8)
+            .margin({ left: 12, right: 12 });
           }
 
           // 5. 文字复制功能
           Column() {
             Text('联系方式')
-              .fontSize(18)
+              .fontSize(16)
               .fontWeight(FontWeight.Bold)
-              .margin({ top: 20, bottom: 10 });
+              .margin({ top: 10, bottom: 8, left: 12 });
 
             Text(this.copyText)
-              .fontSize(14)
-              .padding(15)
+              .fontSize(12)
+              .padding(12)
               .backgroundColor(0xF5F5F5)
               .borderRadius(8)
+              .margin({ left: 12, right: 12 })
               .onClick(() => {
                 this.onCopyText();
               });
           }
+          .margin({ bottom: 12 });
         }
-        .padding(20);
+        .width('100%')
       }
-      .flexGrow(1);
+      .flexGrow(1)
 
       // 底部TabBar
       Row() {
         ForEach(this.tabs, (tab: TabItem, index: number) => {
           Column() {
             // 红点标记
-            if (tab.name === '导航' && this.showRedDot) {
-              Circle({ width: 8, height: 8 })
+            if (tab.name === '课表' && this.showRedDot) {
+              Circle({ width: 6, height: 6 })
                 .fill(Color.Red)
-                .position({ x: 25, y: 0 });
+                .position({ x: 20, y: 0 });
             }
 
             Text(tab.icon)
-              .fontSize(20);
+              .fontSize(18);
 
             Text(tab.name)
-              .fontSize(12)
-              .fontColor(this.currentIndex === index ? Color.Blue : Color.Gray);
+              .fontSize(10)
+              .fontColor(this.currentIndex === index ? Color.Blue : Color.Gray)
+              .margin({ top: 2 });
           }
           .width('25%')
-          .height(60)
+          .height(50)
           .justifyContent(FlexAlign.Center)
           .onClick(() => {
             this.switchTab(index);
@@ -234,9 +257,9 @@ struct Index {
         }, (tab: TabItem) => tab.name)
       }
       .width('100%')
-      .height(60)
+      .height(50)
       .backgroundColor(Color.White)
-      .border({ width: 1, color: 0xE0E0E0 }); // 修复border语法
+      .border({ width: 1, color: 0xE0E0E0 });
     }
     .width('100%')
     .height('100%')

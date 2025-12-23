@@ -2,7 +2,9 @@
   "color": [
     {
       "name": "start_window_background",
-      "value": "#FFFFFF"
+      "value": "#FFFFFF",
+      "name": "primaryColor",
+      "value": "#007DFF"
     }
   ]
 }

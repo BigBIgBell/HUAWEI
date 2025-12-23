@@ -3,6 +3,7 @@
     "pages/Index",
     "pages/Form",
     "pages/MapPage",
-    "pages/Services"
+    "pages/Services",
+    "pages/SchedulePage"
   ]
 }
