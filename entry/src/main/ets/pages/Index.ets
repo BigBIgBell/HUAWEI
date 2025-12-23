@@ -28,8 +28,12 @@ struct Index {
     { name: '服务', icon: '🎓', page: 'Services' }
   ];
 
-  // 轮播图
-  private banners: string[] = ['banner1', 'banner2', 'banner3'];
+  // 轮播图 - 改为图片资源
+  private banners: Resource[] = [
+    $r('app.media.banner1'), // 第一张轮播图
+    $r('app.media.banner2'), // 第二张轮播图
+    $r('app.media.banner3')  // 第三张轮播图
+  ];
 
   // 快捷功能
   private serviceTabs: ServiceTabItem[] = [
@@ -90,19 +94,14 @@ struct Index {
       // 页面内容 - 使用Stack确保内容适应屏幕
       Stack() {
         Column() {
-          // 1. 轮播图
+          // 1. 轮播图 - 改为Image组件
           Swiper() {
-            ForEach(this.banners, (item: string, index: number) => {
-              Column() {
-                Text(item)
-                  .fontSize(16)
-                  .fontColor(Color.White);
-              }
-              .width('100%')
-              .height(120)
-              .backgroundColor(index === 0 ? Color.Blue :
-                index === 1 ? Color.Green : Color.Red);
-            }, (item: string) => item)
+            ForEach(this.banners, (item: Resource, index: number) => {
+              Image(item)
+                .width('100%')
+                .height(120)
+                .objectFit(ImageFit.Cover)
+            }, (item: Resource, index: number) => `banner-${index}`)
           }
           .width('100%')
           .height(120)
