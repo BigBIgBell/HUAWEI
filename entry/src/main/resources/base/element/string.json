@@ -1,16 +1,39 @@
+
 {
   "string": [
+
     {
       "name": "module_desc",
-      "value": "校园服务应用"
+      "value": "Entry module"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "主应用入口"
+      "value": "Entry Ability"
     },
     {
       "name": "EntryAbility_label",
-      "value": "校园服务"
+      "value": "校园助手"
+    },
+
+    {
+      "name": "internet_permission_reason",
+      "value": "需要访问网络以获取数据"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "需要使用相机进行拍照和录像"
+    },
+    {
+      "name": "read_media_permission_reason",
+      "value": "需要读取本地图片和视频文件"
+    },
+    {
+      "name": "write_media_permission_reason",
+      "value": "需要保存拍摄的图片和视频到本地"
+    },
+    {
+      "name": "microphone_permission_reason",
+      "value": "需要使用麦克风录制录像的声音"
     }
   ]
 }

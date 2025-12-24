@@ -255,6 +255,126 @@ struct SchedulePage {
             .border({ width: 1, color: '#E0E0E0' })
           }
         }
+        if (this.selectedDay === 3) {
+          Column() {
+            Row() {
+              Text('08:00-09:40')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('操作系统')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教201')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('10:00-11:40')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('空闲')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+                .fontColor(Color.Gray)
+              Text('-')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('13:30-15:10')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('数据结构')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教303')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('15:30-17:10')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('软件设计')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教105')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+          }
+        }
+        if (this.selectedDay === 4) {
+          Column() {
+            Row() {
+              Text('08:00-09:40')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('wbe前端')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教201')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('10:00-11:40')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('空闲')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+                .fontColor(Color.Gray)
+              Text('-')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('13:30-15:10')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('数据库原理')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教303')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+
+            Row() {
+              Text('15:30-17:10')
+                .width('30%')
+                .textAlign(TextAlign.Center)
+              Text('软件设计')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+              Text('7教105')
+                .width('35%')
+                .textAlign(TextAlign.Center)
+            }
+            .height(50)
+            .border({ width: 1, color: '#E0E0E0' })
+          }
+        }
       }
       .width('100%')
       .flexGrow(1)

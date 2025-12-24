@@ -4,7 +4,9 @@
     "pages/Form",
     "pages/MapPage",
     "pages/Services",
-    "pages/SchedulePage"
-
+    "pages/SchedulePage",
+    "pages/ForumPage",
+    "pages/SimpleCameraPage",
+    "pages/SubPage"
   ]
 }
